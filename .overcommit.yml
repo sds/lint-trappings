@@ -1,0 +1,27 @@
+# Run Overcommit within a Bundler context using this repo's Gemfile
+gemfile: Gemfile
+
+PreCommit:
+  BundleCheck:
+    enabled: true
+
+  ExecutePermissions:
+    enabled: true
+    exclude:
+      - 'bin/slim-lint'
+
+  HardTabs:
+    enabled: true
+
+  RuboCop:
+    enabled: true
+
+  TrailingWhitespace:
+    enabled: true
+
+  TravisLint:
+    enabled: true
+    flags: ['lint', '--skip-version-check']
+
+  YamlSyntax:
+    enabled: true
