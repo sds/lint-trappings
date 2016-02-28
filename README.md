@@ -226,7 +226,7 @@ preprocess_files:
 
 [Code documentation] is generated with [YARD] and hosted by [RubyDoc.info].
 
-[Code documentation]: http://rdoc.info/github/sds/lint-trap/master/frames
+[Code documentation]: http://rdoc.info/github/sds/lint-trappings/master/frames
 [YARD]: http://yardoc.org/
 [RubyDoc.info]: http://rdoc.info/
 
