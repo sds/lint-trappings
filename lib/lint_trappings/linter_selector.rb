@@ -46,8 +46,9 @@ module LintTrappings
     # @return [Array<LintTrappings::Linter>]
     def enabled_linter_classes
       # Include the explicit list of linters if a list was specified
-      explicitly_included = included_linter_classes =
-        linter_classes_from_names(@options.fetch(:included_linters, []))
+      explicitly_included =
+        included_linter_classes =
+          linter_classes_from_names(@options.fetch(:included_linters, []))
 
       if included_linter_classes.empty?
         # Otherwise use the list of enabled linters specified by the config.

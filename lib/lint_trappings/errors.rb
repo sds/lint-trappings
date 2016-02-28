@@ -13,14 +13,12 @@ module LintTrappings
     def self.exit_status(*args)
       if args.any?
         @exit_status = args.first
+      elsif @exit_status
+        @exit_status
       else
-        if @exit_status
-          @exit_status
-        else
-          ancestors[1..-1].each do |ancestor|
-            return 70 if ancestor == LintTrappingsError # No exit status defined
-            return ancestor.exit_status if ancestor.exit_status
-          end
+        ancestors[1..-1].each do |ancestor|
+          return 70 if ancestor == LintTrappingsError # No exit status defined
+          return ancestor.exit_status if ancestor.exit_status
         end
       end
     end

@@ -11,7 +11,7 @@ RSpec.describe LintTrappings::LinterSelector do
 
   # Create 3 linters with actual names. Doing this dynamically allows us to not
   # need actual linter implemenations.
-  linter_classes = 3.times.map do |i|
+  linter_classes = Array.new(3) do |i|
     LintTrappings::Linter.const_set("Linter#{i + 1}", Class.new(LintTrappings::Linter))
   end
 

@@ -126,7 +126,7 @@ module LintTrappings
     end
 
     # List of built-in hook options which are available to every hook
-    BUILT_IN_HOOK_OPTIONS = %w[enabled severity include exclude]
+    BUILT_IN_HOOK_OPTIONS = %w[enabled severity include exclude].freeze
 
     # Converts a configuration hash to a struct so configuration values are
     # accessed via method calls. This is valuable as it provides faster feedback

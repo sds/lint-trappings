@@ -1,5 +1,8 @@
 inherit_from: .rubocop_todo.yml
 
+AllCops:
+  TargetRubyVersion: 2.0
+
 Lint/AmbiguousRegexpLiteral:
   Enabled: false
 
@@ -94,5 +97,8 @@ Style/SpecialGlobalVars:
 Style/TrivialAccessors:
   Enabled: false
 
-Style/TrailingComma:
+Style/TrailingCommaInArguments:
+  Enabled: false
+
+Style/TrailingCommaInLiteral:
   Enabled: false

@@ -8,7 +8,7 @@ module LintTrappings::Matchers
   #
   #   it { should report_lint line: 2 }
   class ReportLintMatcher
-    ALLOWED_KEYWORD_ARGUMENTS = %i[line message]
+    ALLOWED_KEYWORD_ARGUMENTS = %i[line message].freeze
 
     def initialize(*args, **kwargs)
       @options = kwargs
