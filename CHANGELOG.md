@@ -1,5 +1,5 @@
 # LintTrappings Change History
 
-## master (unreleased)
+## 0.1.0
 
-* Initial prototype
+* Initial framework release
