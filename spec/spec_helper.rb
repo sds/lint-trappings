@@ -8,7 +8,7 @@ else
   require 'simplecov'
 end
 
-require 'lint_trap/spec'
+require 'lint_trappings/spec'
 require 'rspec/its'
 
 Dir[File.join(%W[#{File.dirname(__FILE__)} support ** *.rb])].each { |f| require f }
@@ -16,8 +16,8 @@ Dir[File.join(%W[#{File.dirname(__FILE__)} support ** *.rb])].each { |f| require
 RSpec.configure do |config|
   config.expose_dsl_globally = false # Don't add `describe` to global namespace
 
-  config.include LintTrap::Spec::DirectoryHelpers
-  config.include LintTrap::Spec::IndentationHelpers
+  config.include LintTrappings::Spec::DirectoryHelpers
+  config.include LintTrappings::Spec::IndentationHelpers
 
   config.expect_with :rspec do |c|
     c.syntax = :expect

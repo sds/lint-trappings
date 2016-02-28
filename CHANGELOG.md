@@ -1,4 +1,4 @@
-# Lint Trap Change History
+# LintTrappings Change History
 
 ## master (unreleased)
 

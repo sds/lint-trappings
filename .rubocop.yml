@@ -31,7 +31,7 @@ Style/CollectionMethods:
 
 Style/Documentation:
   Exclude:
-    - 'lib/lint_trap/spec/**/*'
+    - 'lib/lint_trappings/spec/**/*'
     - 'spec/**/*'
 
 Style/DotPosition:

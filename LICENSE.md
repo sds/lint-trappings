@@ -1,4 +1,4 @@
-LintTrap is released under the MIT license.
+LintTrappings is released under the MIT license.
 
 > Copyright (c) 2016 Shane da Silva. http://shane.io
 >

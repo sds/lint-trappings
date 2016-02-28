@@ -1,22 +1,28 @@
-# LintTrap
+# LintTrappings
 
-[![Gem Version](https://badge.fury.io/rb/lint_trap.svg)](http://badge.fury.io/rb/lint_trap)
-[![Build Status](https://travis-ci.org/sds/lint-trap.svg?branch=master)](https://travis-ci.org/sds/lint-trap)
-[![Code Climate](https://codeclimate.com/github/sds/lint-trap.svg)](https://codeclimate.com/github/sds/lint-trap)
-[![Coverage Status](https://coveralls.io/repos/sds/lint-trap/badge.svg)](https://coveralls.io/r/sds/lint-trap)
-[![Dependency Status](https://gemnasium.com/sds/lint-trap.svg)](https://gemnasium.com/sds/lint-trap)
-[![Inline docs](http://inch-ci.org/github/sds/lint-trap.svg?branch=master)](http://inch-ci.org/github/sds/lint-trap)
+[![Gem Version](https://badge.fury.io/rb/lint_trappings.svg)](http://badge.fury.io/rb/lint_trappings)
+[![Build Status](https://travis-ci.org/sds/lint-trappings.svg?branch=master)](https://travis-ci.org/sds/lint-trappings)
+[![Code Climate](https://codeclimate.com/github/sds/lint-trappings.svg)](https://codeclimate.com/github/sds/lint-trappings)
+[![Coverage Status](https://coveralls.io/repos/sds/lint-trappings/badge.svg)](https://coveralls.io/r/sds/lint-trappings)
+[![Dependency Status](https://gemnasium.com/sds/lint-trappings.svg)](https://gemnasium.com/sds/lint-trappings)
+[![Inline docs](http://inch-ci.org/github/sds/lint-trappings.svg?branch=master)](http://inch-ci.org/github/sds/lint-trappings)
 
-**LintTrap** is a Ruby framework for writing static analysis command line tools
-(a.k.a. "linters"). It provides provides a large amount of functionality out of
+> [**trappings**](https://www.google.com/search?q=trappings): the outward signs,
+> features, or objects associated with a particular situation, role, or thing.
+
+> "It had the trappings of success"
+
+**LintTrappings** is a Ruby framework for writing static analysis command line tools
+(a.k.a. "linters"). It provides a large amount of functionality out of
 the box so that the uninteresting aspects of writing one of these tools
 (command line argument processing, configuration loading, file exclusion, etc.)
 are managed by the framework instead of yourself.
 
-Development of LintTrap was inspired by a number of static analysis tools
+Development of LintTrappings was inspired by a number of static analysis tools
 I've built and maintained over the years, including [scss-lint], [haml-lint],
 and [slim-lint]. A common set of patterns and functionality began to appear,
-which have been extracted into this framework.
+which have been extracted into this framework. It makes it far easier to get
+started writing your own automated static analysis tool.
 
 [scss-lint]: https://github.com/brigade/scss-lint
 [haml-lint]: https://github.com/brigade/haml-lint
@@ -31,18 +37,18 @@ which have been extracted into this framework.
 
 ## Requirements
 
- * Ruby 2.0.0+
+ * Ruby 2.0+
 
 ## Configuration
 
 ### Application Configuration
 
 When creating your own application, you need to create a class that inherits
-`LintTrap::Application`:
+`LintTrappings::Application`:
 
 ```ruby
 module MyApp
-  class Application < LintTrap::Application
+  class Application < LintTrappings::Application
     name                      'MyApp'
     executable_name           'my-app'
     version                   MyApp::VERSION
@@ -83,7 +89,7 @@ end
 
 ### Configuration File
 
-LintTrap supports a large collection of configuration options in your
+LintTrappings supports a large collection of configuration options in your
 application's YAML file. These are values that can be tweaked by the users
 of your application without you having to write any code–they all work out
 of the box.
@@ -229,17 +235,10 @@ preprocess_files:
 We love getting feedback with or without pull requests. If you do add a new
 feature, please add tests so that we can avoid breaking it in the future.
 
-Speaking of tests, we use `rspec`, which can be run by executing the following
-from the root directory of the repository:
-
-```bash
-bundle exec rspec
-```
-
 ## Change History
 
 If you're interested in seeing the changes and bug fixes between each version
-of LintTrap, read the [Lint Trap Change History](CHANGELOG.md).
+of LintTrappings, read the [LintTrappings Change History](CHANGELOG.md).
 
 ## License
 
