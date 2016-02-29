@@ -62,11 +62,11 @@ module LintTrappings
         # Convert excluded paths to patterns so we don't need to actually hold
         # all excluded files in memory
         excluded_patterns = excluded_patterns.dup
-        excluded_paths.each do |file|
-          if File.directory?(file)
-            excluded_patterns << File.join(file, '**', '*')
-          elsif File.file?(file)
-            excluded_patterns << file
+        excluded_paths.each do |path|
+          if File.directory?(path)
+            excluded_patterns << File.join(path, '**', '*')
+          elsif File.file?(path)
+            excluded_patterns << path
           else
             raise LintTrappings::InvalidFilePathError,
                   "Excluded path '#{path}' does not correspond to a valid file"

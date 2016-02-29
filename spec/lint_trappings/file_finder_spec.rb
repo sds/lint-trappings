@@ -54,6 +54,14 @@ RSpec.describe LintTrappings::FileFinder do
 
         it { should == [] }
       end
+
+      context 'and excluded_paths contains a non-existent file/directory' do
+        let(:excluded_paths) { %w[nonexistent.file] }
+
+        it 'raises' do
+          expect { subject }.to raise_error LintTrappings::InvalidFilePathError
+        end
+      end
     end
 
     context 'when included_paths contains a directory' do
