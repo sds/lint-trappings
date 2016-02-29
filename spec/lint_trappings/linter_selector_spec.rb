@@ -23,8 +23,31 @@ RSpec.describe LintTrappings::LinterSelector do
   end
 
   before do
-    allow_any_instance_of(described_class).to receive(:all_linter_classes) { linter_classes }
     allow(application).to receive(:linter_base_class) { LintTrappings::Linter }
+  end
+
+  describe '#initialize' do
+    subject { linter_selector }
+
+    context 'when an explicitly included linter does not exist' do
+      let(:options) { { included_linters: %w[NonExistentLinter] } }
+
+      it 'raises' do
+        expect { subject }.to raise_error LintTrappings::NonExistentLinter,
+                                          'Linter NonExistentLinter does not exist! ' \
+                                          'Are you sure you spelt it correctly?'
+      end
+    end
+
+    context 'when an explicitly excluded linter does not exist' do
+      let(:options) { { excluded_linters: %w[NonExistentLinter] } }
+
+      it 'raises' do
+        expect { subject }.to raise_error LintTrappings::NonExistentLinter,
+                                          'Linter NonExistentLinter does not exist! ' \
+                                          'Are you sure you spelt it correctly?'
+      end
+    end
   end
 
   describe '#linters_for_file' do
@@ -131,6 +154,14 @@ RSpec.describe LintTrappings::LinterSelector do
 
         it 'includes the linter' do
           expect(subject).to include 'Linter1'
+        end
+      end
+
+      context 'when none of the linter `include` patterns match the file path' do
+        let(:config) { super().tap { |h| h['linters']['Linter1']['include'] = %w[missing.slim] } }
+
+        it 'includes the linter' do
+          expect(subject).to_not include 'Linter1'
         end
       end
 

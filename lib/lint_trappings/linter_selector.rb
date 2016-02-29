@@ -112,7 +112,7 @@ module LintTrappings
         begin
           @application.linter_base_class.const_get(linter_name)
         rescue NameError
-          raise NoSuchLinter,
+          raise NonExistentLinter,
                 "Linter #{linter_name} does not exist! Are you sure you spelt it correctly?"
         end
       end

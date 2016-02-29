@@ -97,6 +97,9 @@ module LintTrappings
   # enabled.
   class NoLintersError < ConfigurationError; end
 
+  # Raised when a specified linter does not exist.
+  class NonExistentLinter < ConfigurationError; end
+
   # Raised when there was a problem parsing a document.
   class ParseError < LintTrappingsError
     # @return [String] path to the file that failed to parse
