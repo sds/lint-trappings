@@ -2,17 +2,17 @@ require 'spec_helper'
 
 RSpec.describe LintTrappings::Document do
   let(:config) { double }
+  let(:options) { {} }
+  let(:document_class) { described_class }
+
+  let(:source) { normalize_indent(<<-SRC) }
+    This is some source code
+    It is beautiful source code
+  SRC
+
+  subject { document_class.new(source, config, options) }
 
   describe '#initialize' do
-    let(:source) { normalize_indent(<<-SRC) }
-      This is some source code
-      It is beautiful source code
-    SRC
-
-    let(:options) { {} }
-
-    subject { described_class.new(source, config, options) }
-
     before do
       allow_any_instance_of(described_class).to receive(:process_source)
     end
@@ -41,6 +41,16 @@ RSpec.describe LintTrappings::Document do
     context 'when path is not specified' do
       it 'sets the path to `nil`' do
         expect(subject.path).to be_nil
+      end
+    end
+  end
+
+  describe '#process_source' do
+    context 'when process_source has not been implemented' do
+      let(:document_class) { Class.new(LintTrappings::Document) }
+
+      it 'raises' do
+        expect { subject }.to raise_error NotImplementedError, 'Must implement #process_source'
       end
     end
   end
