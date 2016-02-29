@@ -16,7 +16,7 @@ module LintTrappings
       elsif @exit_status
         @exit_status
       else
-        ancestors[1..-1].each do |ancestor|
+        ancestors.each do |ancestor|
           return 70 if ancestor == LintTrappingsError # No exit status defined
           return ancestor.exit_status if ancestor.exit_status
         end
