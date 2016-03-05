@@ -10,6 +10,8 @@ module LintTrappings
     def load(options)
       outputs = options.fetch(:formatters, [{ 'Default' => :stdout }])
 
+      require 'lint_trappings/formatter/base'
+
       outputs.map do |output_specification|
         output_specification.map do |formatter_name, output_path|
           load_formatter(formatter_name)
@@ -33,7 +35,7 @@ module LintTrappings
         if output_path == :stdout
           @output
         else
-          Output.new(File.open(output_path, File::CREAT | File::WRONLY))
+          Output.new(File.open(output_path, File::CREAT | File::TRUNC | File::WRONLY))
         end
 
       Formatter.const_get(formatter_name).new(@application, @config, options, output_dest)
