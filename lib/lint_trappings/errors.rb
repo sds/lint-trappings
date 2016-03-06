@@ -108,6 +108,10 @@ module LintTrappings
     # @return [Range<LintTrappings::Location>] source range of the parse error
     attr_reader :source_range
 
+    # @param options [Hash]
+    # @option options :message [String]
+    # @option options :path [String]
+    # @option options :source_range [Range<LintTrappings::Location>]
     def initialize(options)
       @message = options[:message]
       @path = options[:path]

@@ -123,9 +123,13 @@ severities:
 # problem reported by the linter is assigned this severity.
 default_severity: error
 
-# If a linter raises an exception (which is always a bug), which severity to
-# report the error as.
+# If a linter raises an exception (which is always a bug), treat the error
+# as a lint with this level of severity.
 linter_exception_severity: error
+
+# If an error occurs parsing a document (i.e. due to syntax error), treat
+# the error as a lint with this level of severity.
+parse_exception_severity: error
 
 # Defines the list of extensions of files to include when recursively searching
 # under directory paths. This allows you to specify directories in your

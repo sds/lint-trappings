@@ -153,26 +153,25 @@ RSpec.describe LintTrappings::Runner do
     end
 
     context 'when a linter raises an unexpected error' do
-      it 'captures the exception in a lint' do
+      let(:doc) { double(path: 'some-file.txt') }
+      let(:linter) { double }
+      let(:job) { double(linter: linter, path: doc.path) }
+      let(:exception) { StandardError.new('Something happened!') }
+      let(:source_range) { LintTrappings::Location.new(1)..LintTrappings::Location.new(1) }
+
+      before do
         allow(runner).to receive(:load_formatters) { [] }
+        allow(runner).to receive(:load_documents) { [[doc], []] }
+        allow(runner).to receive(:determine_jobs_to_run) { [job] }
+        expect(linter).to receive(:run).with(doc).and_raise(exception)
+      end
 
-        doc1 = double(path: 'some-file.txt')
-        allow(runner).to receive(:load_documents) { [[doc1], []] }
-
-        linter1 = double
-        job1 = double(linter: linter1, path: doc1.path)
-        allow(runner).to receive(:determine_jobs_to_run) { [job1] }
-
-        exception = StandardError.new('Something happened!')
-        expect(linter1).to receive(:run).with(doc1)
-          .and_raise(exception)
-
-        location = LintTrappings::Location.new(1)
+      it 'captures the exception in a lint' do
         expect(LintTrappings::Lint).to receive(:new).with(
           hash_including(
-            linter: linter1,
-            path: doc1.path,
-            source_range: location..location,
+            linter: linter,
+            path: doc.path,
+            source_range: source_range,
             message: 'Error occurred while linting some-file.txt: Something happened!',
             severity: :error,
             exception: exception,
@@ -180,6 +179,22 @@ RSpec.describe LintTrappings::Runner do
         ).and_call_original
 
         expect { subject }.to_not raise_error
+      end
+
+      context 'when linter_exception_severity is specified in config' do
+        before do
+          allow(config).to receive(:fetch).with(any_args)
+          allow(config).to receive(:fetch)
+            .with('linter_exception_severity', :error) { :custom_severity }
+        end
+
+        it 'uses the specified severity' do
+          expect(LintTrappings::Lint).to receive(:new).with(
+            hash_including(severity: :custom_severity)
+          ).and_call_original
+
+          subject
+        end
       end
     end
   end

@@ -39,7 +39,7 @@ module LintTrappings
             path: file_to_lint.path,
             source_range: err.source_range,
             message: "Error occurred while parsing #{file_to_lint.path}: #{err.message}",
-            severity: :error,
+            severity: @config.fetch('parse_exception_severity', :error),
           )
         end
       end
@@ -61,13 +61,13 @@ module LintTrappings
 
     def find_files(options)
       opts = {}
-      opts[:allowed_extensions] = @config.fetch(:file_extensions, @application.file_extensions)
+      opts[:allowed_extensions] = @config.fetch('file_extensions', @application.file_extensions)
 
-      opts[:included_paths] = options.fetch(:included_paths, @config.fetch(:included_paths, []))
-      opts[:excluded_paths] = @config.fetch(:excluded_paths, []) +
+      opts[:included_paths] = options.fetch(:included_paths, @config.fetch('included_paths', []))
+      opts[:excluded_paths] = @config.fetch('excluded_paths', []) +
                               options.fetch(:excluded_paths, [])
 
-      opts[:included_patterns] = @config.fetch(:include) do
+      opts[:included_patterns] = @config.fetch('include') do
         if opts[:included_paths].any?
           # Don't specify default inclusion pattern since include paths were
           # explicitly specified
@@ -78,7 +78,7 @@ module LintTrappings
           opts[:allowed_extensions].map { |ext| "**/*.#{ext}" }
         end
       end
-      opts[:excluded_patterns] = @config.fetch(:exclude, [])
+      opts[:excluded_patterns] = @config.fetch('exclude', [])
 
       FileFinder.find(opts)
     end
