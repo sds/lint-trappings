@@ -2,7 +2,7 @@ require 'optparse'
 
 module LintTrappings
   # Handles option parsing for the command line application.
-  class ArgumentsParser
+  class ArgumentsParser # rubocop:disable Metrics/ClassLength
     def initialize(application)
       @application = application
     end
@@ -58,15 +58,7 @@ module LintTrappings
 
       parser.on('-o', '--out output-file-path', String,
                 'Specify a file to write output to') do |file_path|
-        if @options[:formatters]
-          # Change the last specified formatter to output to the given file
-          last_formatter = @options[:formatters].last
-          last_formatter[last_formatter.keys.first] = file_path
-        else
-          # Otherwise if no formatters have been specified yet, set the default
-          # formatter to write to the given file
-          @options[:formatters] << { 'Default' => file_path }
-        end
+        redirect_formatter(file_path)
       end
 
       parser.on('--stdin-file-path file-path', String,
@@ -99,6 +91,7 @@ module LintTrappings
     def add_misc_options(parser)
       parser.on('-C', '--concurrency workers', Integer,
                 'Specify the number of concurrent workers you want') do |workers|
+        raise InvalidCliOptionError, 'Concurrency cannot be < 1' if workers < 1
         @options[:concurrency] = workers
       end
     end
@@ -116,7 +109,7 @@ module LintTrappings
 
       parser.on('--show-docs [linter-name]', '--show-documentation [linter-name]') do |linter_name|
         @options[:command] = :display_documentation
-        @options[:linter] = linter_name
+        @options[:linter] = linter_name if linter_name
       end
 
       parser.on('--[no-]color', 'Force output to be colorized') do |color|
@@ -139,6 +132,27 @@ module LintTrappings
       parser.on_tail('-V', '--verbose-version', 'Display verbose version information') do
         @options[:command] = :display_version
         @options[:verbose_version] = true
+      end
+    end
+
+    def redirect_formatter(file_path)
+      if @options[:formatters]
+        # Change the last specified formatter to output to the given file
+        last_formatter = @options[:formatters].last
+        formatter_name = last_formatter.keys.first
+        if last_formatter[formatter_name] == :stdout
+          # Write output to file
+          last_formatter[formatter_name] = file_path
+        else
+          # Otherwise this formatter's output has already been set to a file,
+          # so assume the user wants to output the same format to two
+          # different files
+          @options[:formatters] << { formatter_name => file_path }
+        end
+      else
+        # Otherwise if no formatters have been specified yet, set the default
+        # formatter to write to the given file
+        @options[:formatters] = [{ 'Default' => file_path }]
       end
     end
   end
