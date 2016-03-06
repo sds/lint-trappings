@@ -4,7 +4,6 @@
 require 'lint_trappings/errors'
 require 'lint_trappings/configuration'
 require 'lint_trappings/utils'
-require 'lint_trappings/file_finder'
 require 'lint_trappings/output'
 require 'lint_trappings/document'
 require 'lint_trappings/location'

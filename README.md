@@ -123,6 +123,10 @@ severities:
 # problem reported by the linter is assigned this severity.
 default_severity: error
 
+# If a linter raises an exception (which is always a bug), which severity to
+# report the error as.
+linter_exception_severity: error
+
 # Defines the list of extensions of files to include when recursively searching
 # under directory paths. This allows you to specify directories in your
 # `include`/`exclude` paths without needing the `**/*.ext` glob.

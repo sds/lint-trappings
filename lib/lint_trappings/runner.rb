@@ -1,6 +1,6 @@
+require 'lint_trappings/document_loader'
 require 'lint_trappings/formatter_forwarder'
 require 'lint_trappings/formatter_loader'
-require 'lint_trappings/preprocessor'
 
 module LintTrappings
   # Linter runner.
@@ -8,44 +8,40 @@ module LintTrappings
   # Runs linters against a set of files, ensuring the appropriate linters are
   # run against the relevant files based on configuration.
   class Runner
+    # A individual unit of work which can be processed by a concurrent worker.
+    Job = Struct.new(:linter, :path)
+
     def initialize(application, config, output)
       @application = application
       @config = config
       @output = output
     end
 
-    # A individual unit of work which can be processed by a worker.
-    Job = Struct.new(:linter, :path)
-
     # Runs the appropriate linters against the set of specified files, return a
     # report of all lints found.
     #
-    # @param options [Hash]
+    # @param options [Hash] options parsed by {LintTrappings::ArgumentsParser}
     #
     # @return [LintTrappings::Report] report of all lints found and other statistics
     def run(options = {})
       @options = options
 
-      # Coalesce formatters into a single formatter which will forward calls
-      formatters = FormatterLoader.new(@application, @config, @output).load(options)
-      @formatter = FormatterForwarder.new(formatters)
+      @formatter = FormatterForwarder.new(load_formatters)
+      documents, parse_lints = load_documents
 
       # We store the documents in a map so that if we're parallelizing the run
       # we don't need to pass serialized Document objects via IPC, just the path
       # string.  Since forking will use copy-on-write semantics, we'll be able
       # to reuse the memory storing those documents for all workers, since we're
       # just reading.
-      @paths_to_documents_map, parse_lints = load_documents_to_lint(options)
+      @paths_to_documents_map = documents.each_with_object({}) do |document, hash|
+        hash[document.path] = document
+      end
 
-      # Extract all jobs we want to run as file/linter pairs
-      linter_selector = LinterSelector.new(@application, @config, options)
-      jobs = @paths_to_documents_map.keys.map do |path|
-        linter_selector.linters_for_file(path).map { |linter| Job.new(linter, path) }
-      end.flatten
+      jobs = determine_jobs_to_run(documents)
 
       lints = find_all_lints(jobs) + parse_lints
-      report = Report.new(@config, lints, @paths_to_documents_map.values)
-
+      report = Report.new(@config, lints, documents)
       @formatter.finished(report)
 
       report
@@ -53,70 +49,22 @@ module LintTrappings
 
     private
 
-    # A file to be linted.
-    FileToLint = Struct.new(:io, :path)
-
-    def determine_files_to_lint(options)
-      if options[:stdin_file_path]
-        [FileToLint.new(options[:stdin], options[:stdin_file_path])]
-      else
-        find_files(options).map do |path|
-          FileToLint.new(File.open(path), path)
-        end
-      end
-    rescue Errno::ENOENT => err
-      raise InvalidFilePathError, err.message
+    def load_formatters
+      FormatterLoader.new(@application, @config, @output).load(@options)
     end
 
-    def find_files(options)
-      opts = {}
-      opts[:allowed_extensions] = @config.fetch(:file_extensions, @application.file_extensions)
-
-      opts[:included_paths] = options.fetch(:included_paths, @config.fetch(:included_paths, []))
-      opts[:excluded_paths] = @config.fetch(:excluded_paths, []) +
-                              options.fetch(:excluded_paths, [])
-
-      opts[:included_patterns] = @config.fetch(:include) do
-        if opts[:included_paths].any?
-          # Don't specify default inclusion pattern since include paths were
-          # explicitly specified
-          []
-        else
-          # Otherwise, we want the default behavior to lint all files with the
-          # default file extensions
-          opts[:allowed_extensions].map { |ext| "**/*.#{ext}" }
-        end
-      end
-      opts[:excluded_patterns] = @config.fetch(:exclude, [])
-
-      FileFinder.find(opts)
+    def load_documents
+      DocumentLoader.new(@application, @config, @formatter).load(@options)
     end
 
-    def load_documents_to_lint(options)
-      documents = {}
-      parse_lints = []
-
-      files_to_lint = determine_files_to_lint(options)
-      Preprocessor.new(@config).preprocess_files(files_to_lint)
-      @formatter.started(files_to_lint)
-
-      files_to_lint.each do |file_to_lint|
-        begin
-          documents[file_to_lint.path] =
-            @application.document_class.new(file_to_lint.io.read,
-                                            @config,
-                                            path: file_to_lint.path)
-        rescue ParseError => err
-          parse_lints << Lint.new(
-            path: file_to_lint.path,
-            source_range: err.source_range,
-            message: "Error occurred while parsing #{file_to_lint.path}: #{err.message}",
-            severity: :error,
-          )
+    def determine_jobs_to_run(documents)
+      # Extract all jobs we want to run as file/linter pairs
+      linter_selector = LinterSelector.new(@application, @config, @options)
+      documents.map do |document|
+        linter_selector.linters_for_file(document.path).map do |linter|
+          Job.new(linter, document.path)
         end
-      end
-
-      [documents, parse_lints]
+      end.flatten
     end
 
     def scan_document(job)
@@ -137,7 +85,7 @@ module LintTrappings
         path: job.path,
         source_range: loc..loc,
         message: message,
-        severity: :error,
+        severity: @config.fetch('linter_exception_severity', :error).to_sym,
         exception: err,
       )]
 
@@ -149,7 +97,6 @@ module LintTrappings
       lints =
         if workers = @options[:concurrency]
           require 'parallel'
-          workers = workers == 'auto' ? Parallel.processor_count : Integer(workers)
           ::Parallel.map(jobs, { in_processes: workers }, &method(:scan_document))
         else
           jobs.map(&method(:scan_document))
