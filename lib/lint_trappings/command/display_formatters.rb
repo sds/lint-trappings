@@ -1,3 +1,5 @@
+require_relative 'base'
+
 module LintTrappings::Command
   # Displays all available formatters.
   class DisplayFormatters < Base

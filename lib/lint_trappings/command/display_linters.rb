@@ -1,3 +1,4 @@
+require_relative 'base'
 require 'set'
 
 module LintTrappings::Command

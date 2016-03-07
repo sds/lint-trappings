@@ -84,22 +84,25 @@ module LintTrappings
     end
 
     def run(options = {})
-      @output.color_enabled = options.fetch(:color, @output.tty?)
+      configure_color(options)
       config = load_configuration(options)
 
-      command = create_command(options[:command]).new(self, config, options, @output)
+      command = create_command(options[:command], config, options)
       command.run
     end
 
     private
 
-    def create_command(command)
+    def configure_color(options)
+      @output.color_enabled = options.fetch(:color, @output.tty?)
+    end
+
+    def create_command(command, config, options)
       raise InvalidCommandError,
             '`command` option must be specified!' unless command
 
       command = command.to_s
 
-      require 'lint_trappings/command/base'
       begin
         require "lint_trappings/command/#{Utils.snake_case(command)}"
       rescue LoadError, SyntaxError => ex
@@ -107,7 +110,7 @@ module LintTrappings
               "Unable to load command '#{command}': #{ex.message}"
       end
 
-      Command.const_get(Utils.camel_case(command))
+      Command.const_get(Utils.camel_case(command)).new(self, config, options, @output)
     end
 
     # Loads the application configuration.
@@ -125,7 +128,7 @@ module LintTrappings
           begin
             config_loader.load(working_directory: Dir.pwd)
           rescue NoConfigurationFileError
-            base_configuration
+            Configuration.new # Assume empty configuration
           end
         end
 

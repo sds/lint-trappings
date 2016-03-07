@@ -1,3 +1,5 @@
+require_relative 'base'
+
 module LintTrappings::Command
   # Scan for lints, outputting report of results using the specified formatter.
   class Scan < Base

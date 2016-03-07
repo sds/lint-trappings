@@ -1,3 +1,4 @@
+require_relative 'base'
 require 'terminal-table'
 
 module LintTrappings::Command

@@ -1,3 +1,5 @@
+require_relative 'base'
+
 module LintTrappings::Command
   # Outputs application version information.
   class DisplayVersion < Base
