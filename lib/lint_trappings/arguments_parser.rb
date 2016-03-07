@@ -71,6 +71,11 @@ module LintTrappings
                 'Specify a path to `require`') do |require_path|
         (@options[:require_paths] ||= []) << require_path
       end
+
+      parser.on('-p', '--plugin plugin-require-path', String,
+                'Specify a path to `require` to load a linter plugin') do |require_path|
+        (@options[:linter_plugins] ||= []) << require_path
+      end
     end
 
     # Register linter-related flags.

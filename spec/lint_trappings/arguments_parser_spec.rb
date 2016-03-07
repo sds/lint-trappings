@@ -99,6 +99,16 @@ RSpec.describe LintTrappings::ArgumentsParser do
       end
     end
 
+    context 'with --plugin' do
+      let(:args) { %w[--plugin some/linter/plugin] }
+      its([:linter_plugins]) { are_expected.to eq %w[some/linter/plugin] }
+
+      context 'specified multiple times' do
+        let(:args) { super() + %w[--plugin another/linter/plugin] }
+        its([:linter_plugins]) { are_expected.to eq %w[some/linter/plugin another/linter/plugin] }
+      end
+    end
+
     context 'with --include-linter' do
       let(:args) { %w[--include-linter MyLinter] }
       its([:included_linters]) { are_expected.to eq %w[MyLinter] }
