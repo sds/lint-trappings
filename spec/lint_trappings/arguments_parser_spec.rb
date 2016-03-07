@@ -109,6 +109,19 @@ RSpec.describe LintTrappings::ArgumentsParser do
       end
     end
 
+    context 'with --linter-dir' do
+      let(:args) { %w[--linter-dir some/linter/directory] }
+      its([:linter_directories]) { are_expected.to eq %w[some/linter/directory] }
+
+      context 'specified multiple times' do
+        let(:args) { super() + %w[--linter-dir another/linter/directory] }
+
+        its([:linter_directories]) do
+          are_expected.to eq %w[some/linter/directory another/linter/directory]
+        end
+      end
+    end
+
     context 'with --include-linter' do
       let(:args) { %w[--include-linter MyLinter] }
       its([:included_linters]) { are_expected.to eq %w[MyLinter] }
