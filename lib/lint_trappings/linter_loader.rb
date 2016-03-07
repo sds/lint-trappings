@@ -14,10 +14,18 @@ module LintTrappings
     def load(options)
       load_directory(@application.linters_directory)
 
-      directories = Array(@config['linter_directories']) + Array(options[:linter_directories])
-      directories.each do |directory|
+      Array(@config['linter_directories']).each do |directory|
+        load_directory(File.expand_path(directory, File.dirname(@config.path)))
+      end
+
+      Array(options[:linter_directories]).each do |directory|
         load_directory(directory)
       end
+
+      # NOTE: Linter plugins get loaded via the ConfigurationResolver. While it
+      # would seem to make more sense for the LinterLoader to do this, the
+      # resolver needs to since the plugins might have configuration files that
+      # need to be merged.
     end
 
     private
@@ -35,7 +43,7 @@ module LintTrappings
     end
 
     def load_path(path)
-      require path
+      Kernel.load path
     rescue LoadError, SyntaxError => ex
       raise LinterLoadError,
             "Unable to load linter file '#{path}': #{ex.message}"
