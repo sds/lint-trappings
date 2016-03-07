@@ -230,6 +230,33 @@ preprocess_files:
   - 'another/path/**/*.txt'
 ```
 
+### Command Line Flags
+
+Any LintTrappings-powered application also supports the following flags out of
+the box:
+
+Flag                               | Description
+-----------------------------------|-------------------------------------------
+`-c`/`--config-file path`          | Specify which configuration file to use
+`-e`/`--exclude-path path`         | Add a path to be excluded (can use flag multiple times)
+`-f`/`--format FormatterName`      | Specify which output format you want. Combine with the `--out` flag to redirect to a file (can use flags multiple times to write different formats to different output files).
+`-o`/`--out path`                  | Redirect the last specified formatter (via `--format`) to a file. If no formatter has been specified, redirects the default format output to the specified file.
+`--stdin-file-path path`           | When passing a file to the linter via standard input, treat the file as having this path (so relevant configuration can be applied). Only a single file at a time can be linted this way, but it is useful for integrations with text editor plugins.
+`-r`/`--require library-path`      | Specify a path to a Ruby library/file to be required via `Kernel.require`. This allows you to load third-party formatters or other integrations.
+`-i`/`--include-linter LinterName` | Specify a specific linter to run (can use flag multiple times to specify multiple linters). This disregards any linters enabled/disabled by your configuration file.
+`-x`/`--exclude-linter LinterName` | Specify a linter to exclude (can use flag multiple times to exclude multiple linters) in addition to the linters disabled by your configuration file.
+`-p`/`--plugin library-path`       | Load a Ruby library containing a third-party linter plugin (typically packaged as a gem).
+`--linter-dir path`                | Load custom linters from a directory (will load files recursively in subdirectories). Can specify multiple times for different directories.
+`-C`/`--concurrency num-workers`   | Configure the number of processes to use when linting files. Must be a non-zero positive integer.
+`--show-linters`                   | Display available/loaded linters and whether or not they are enabled.
+`--show-formatters`                | Display available/loaded formatters.
+`--show-docs [LinterName]`         | Display documentation for all linters, including their configurable options. Can optionally specify a linter to show documentation for only that linter.
+`--[no-]color`                     | Whether or not to output colorized text. Color is enabled by default if the standard output stream is a TTY.
+`-d`/`--debug`                     | Display additional debug information (for example, the stack trace when a linter raises an unhandled exception).
+`-h`/`--help`                      | Display a list of all command line options.
+`-v`/`--version`                   | Display the application version.
+`-V`/`--verbose-version`           | Display the application version as well as information about the Ruby runtime and LintTrappings gem version.
+
 ## Documentation
 
 [Code documentation] is generated with [YARD] and hosted by [RubyDoc.info].
