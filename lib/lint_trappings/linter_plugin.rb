@@ -8,9 +8,6 @@ module LintTrappings
     #   to `require`!)
     def initialize(require_path)
       @require_path = require_path
-    end
-
-    def load
       require @require_path
     rescue LoadError, SyntaxError => ex
       raise LinterLoadError,
