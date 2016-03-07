@@ -98,8 +98,24 @@ RSpec.describe LintTrappings::Application do
 
       it 'loads the file with the ConfigurationLoader' do
         expect_any_instance_of(LintTrappings::ConfigurationLoader)
-          .to receive(:load_file).with('some-config.yaml')
+          .to receive(:load_file)
+          .with('some-config.yaml')
           .and_return(LintTrappings::Configuration.new)
+        subject
+      end
+
+      it 'resolves the configuration' do
+        config = double
+        allow_any_instance_of(LintTrappings::ConfigurationLoader)
+          .to receive(:load_file)
+          .with('some-config.yaml')
+          .and_return(config)
+
+        expect_any_instance_of(LintTrappings::ConfigurationResolver)
+          .to receive(:resolve)
+          .with(config, options)
+          .and_return(LintTrappings::Configuration.new)
+
         subject
       end
     end
@@ -118,6 +134,19 @@ RSpec.describe LintTrappings::Application do
         expect_any_instance_of(LintTrappings::ConfigurationLoader)
           .to receive(:load).with(hash_including(working_directory: Dir.pwd))
           .and_return(LintTrappings::Configuration.new)
+        subject
+      end
+
+      it 'resolves the configuration' do
+        config = double
+        allow_any_instance_of(LintTrappings::ConfigurationLoader)
+          .to receive(:load).and_return(config)
+
+        expect_any_instance_of(LintTrappings::ConfigurationResolver)
+          .to receive(:resolve)
+          .with(config, options)
+          .and_return(LintTrappings::Configuration.new)
+
         subject
       end
     end
