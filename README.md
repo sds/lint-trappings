@@ -163,11 +163,11 @@ exclude_paths:
   - 'some/directory/path'
   - 'some*file.txt' # <- "*" treated as a literal asterisk in this context!
 
-# List of directories to load custom linter implemenations from. This allows
+# List of directories to load custom linter implementations from. This allows
 # developers to easily write their own one-off custom linters for a repository.
 #
 # Directories are recursively scanned for `*.rb` files, so make sure you keep
-# only linter implementaions in that directory, and no other Ruby files!
+# only linter implementations in that directory, and no other Ruby files!
 #
 # If you find yourself needing the same custom linters in multiple projects,
 # you should pull them out into a separate gem and load it via the
