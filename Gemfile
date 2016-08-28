@@ -12,5 +12,5 @@ gem 'coveralls', '~> 0.8'
 gem 'overcommit', '0.35.0'
 
 # Pin tool versions (which are executed by Overcommit) for Travis builds
-gem 'rubocop', '0.41.1'
+gem 'rubocop', '0.42.0'
 gem 'travis', '~> 1.7'

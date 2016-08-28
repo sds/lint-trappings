@@ -65,6 +65,9 @@ Style/Lambda:
 Style/MultilineOperationIndentation:
   Enabled: false
 
+Style/NumericPredicate:
+  Enabled: false
+
 # Prefer curly braces except for %i/%w/%W, since those return arrays.
 Style/PercentLiteralDelimiters:
   PreferredDelimiters:
